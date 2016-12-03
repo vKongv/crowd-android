@@ -28,19 +28,12 @@ public class FoursquareBase {
     private final String CLIENT_SECRET = "NF0XQUWB3KK21WUIOYZVPRZUQUMDNKNYMH30JFD3CZC543SN";
     private final String BASE_URL = "https://api.foursquare.com/v2/";
     private final String API_VER = "20161025";
+    private final int RESULT_LIMIT = 1;
     private String mMainUrl;
 
     public static final String sVenueSearchCall = "venues/search";
     public static final String sVenueDetailCall = "venues/";
     private final String[] sSupportCalls = {sVenueSearchCall, sVenueDetailCall};
-
-
-//    public FoursquareBase(String call){
-//        if(!checkInSupportCall(call)){
-//            return;
-//        }
-//        buildMainUrl(call);
-//    }
 
     private void buildMainUrl(String call) {
         //Build url accordingly
@@ -77,10 +70,9 @@ public class FoursquareBase {
                 urlBuilder.addQueryParameter("client_id", CLIENT_ID);
                 urlBuilder.addQueryParameter("client_secret", CLIENT_SECRET);
                 urlBuilder.addQueryParameter("v", API_VER);
-                urlBuilder.addQueryParameter("query", param);
                 //TODO: Change to param `ll` by getting GPS
                 urlBuilder.addQueryParameter("near", "Kuala Lumpur");
-                urlBuilder.addQueryParameter("limit", "1");
+                urlBuilder.addQueryParameter("limit", Integer.toString(RESULT_LIMIT));
                 urlBuilder.addQueryParameter("query", param);
                 break;
             default:
@@ -130,32 +122,5 @@ public class FoursquareBase {
             e.printStackTrace();
             return null;
         }
-//        try {
-//            client.newCall(request).enqueue(new Callback() {
-//                                                @Override
-//                                                public void onFailure(Call call, IOException e) {
-//                                                    e.printStackTrace();
-//                                                }
-//
-//                                                @Override
-//                                                public void onResponse(Call call, final Response response) throws IOException {
-//                                                    if (!response.isSuccessful()) {
-//                                                        throw new IOException("Unexpected code " + response);
-//                                                    }
-//                                                    String responseData = response.body().string();
-//                                                    try {
-//                                                        JSONObject data = new JSONObject(responseData).getJSONObject("response");
-//                                                        TextView tv1 = new TextView();
-//                                                        tv1.setText();
-//                                                    } catch (JSONException e) {
-//                                                        e.printStackTrace();
-//                                                    }
-//                                                }
-//                                            }
-//            );
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            return null;
-//        }
     }
 }

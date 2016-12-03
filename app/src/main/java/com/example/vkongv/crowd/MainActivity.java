@@ -1,11 +1,13 @@
 package com.example.vkongv.crowd;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v4.widget.TextViewCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,17 +31,29 @@ public class MainActivity extends AppCompatActivity {
     private JSONObject response;
     private TextView tv1;
     private EditText et1;
+    private Button btn1;
     private Venue mVenue;
+
+    private boolean isTest = true;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         tv1 = (TextView) findViewById(R.id.searchText);
         et1 = (EditText) findViewById(R.id.responseText);
+        if(isTest){
+            btn1 = (Button) findViewById(R.id.testLayoutButton);
+            btn1.setVisibility(View.VISIBLE);
+        }
     }
 
     public void callVenueSearch(View v){
         setResponse(tv1.getText().toString());
+    }
+
+    public void openTestLayout(View v){
+        Intent i = new Intent(this, TestActivity.class);
+        startActivity(i);
     }
 
     private void setResponse(final String query) {
@@ -100,6 +114,15 @@ public class MainActivity extends AppCompatActivity {
         MainActivity.this.runOnUiThread(new Runnable() {
             public void run() {
                 Toast toast = Toast.makeText(getApplicationContext(), "Oops! Something went wrong", Toast.LENGTH_SHORT);
+                toast.show();
+            }
+        });
+    }
+
+    private void generateErrorToast(final String msg){
+        MainActivity.this.runOnUiThread(new Runnable() {
+            public void run() {
+                Toast toast = Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT);
                 toast.show();
             }
         });
