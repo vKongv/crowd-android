@@ -10,8 +10,58 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.vkongv.crowd.MainActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <EditText
+        android:id="@+id/searchText"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:paddingRight="36dp"
+        android:paddingLeft="36dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Hello World!" />
+        android:background="@drawable/layout_bg"
+        android:inputType="text"
+        android:textColor="#000000"
+        android:maxLines="1"
+        android:hint="What are you looking for..."
+        android:layout_gravity="center"
+        android:layout_marginBottom="20dp"
+        android:layout_marginTop="20dp"
+        android:textSize="16sp"/>
+
+    <Button
+        android:id="@+id/searchBtn"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/searchText"
+        android:text="Search"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="callVenueSearch"/>
+
+    <EditText
+        android:id="@+id/responseText"
+        android:inputType="none"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/searchBtn"
+        android:text="No response"
+        android:textSize="12dp"
+        android:background="#D3D3D3"
+        android:layout_marginBottom="20dp"/>
+
+    <ImageView
+        android:id="@+id/venuePicture"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_below="@id/responseText"
+        android:layout_centerInParent="true"/>
+
+    <Button
+        android:id="@+id/testLayoutButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:visibility="gone"
+        android:text="Test layout"
+        android:onClick="openTestLayout"
+        android:layout_alignParentBottom="true"/>
 </RelativeLayout>
