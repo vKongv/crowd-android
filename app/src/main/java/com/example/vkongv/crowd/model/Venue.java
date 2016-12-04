@@ -9,20 +9,35 @@ import org.json.JSONObject;
  */
 
 public class Venue {
-    private final String NO_ID = "Unknown ID";
-    private final String NO_NAME = "Unknown Name";
-    private final String NO_ADDRESS = "Unknown Address";
+    public static final String NO_ID = "Unknown ID";
+    public static final String NO_NAME = "Unknown Name";
+    public static final String NO_ADDRESS = "Unknown Address";
 
     private String mVenueId;
     private String mVenueName;
     private String mVenueAddress;
+    private String mVenueImage;
 //    private String mVenue;
 
     public Venue(JSONObject json){
         try{
-            mVenueId = json.getString("id");
-            mVenueName = json.getString("name");
-            mVenueAddress = generateAddress(json.getJSONObject("location").getJSONArray("formattedAddress"));
+            if(json.has("id")){
+                mVenueId = json.getString("id");
+            }else{
+                mVenueId = NO_ID;
+            }
+
+            if(json.has("name")){
+                mVenueName = json.getString("name");
+            }else{
+                mVenueName = NO_NAME;
+            }
+
+            if(json.has("location")){
+                mVenueAddress = generateAddress(json.getJSONObject("location").getJSONArray("formattedAddress"));
+            }else{
+                mVenueAddress = NO_ADDRESS;
+            }
         }catch (JSONException e){
             if(mVenueId == null){
                 mVenueId = NO_ID;
@@ -59,7 +74,19 @@ public class Venue {
         return address;
     }
 
+    public String getId(){
+        return mVenueId;
+    }
+
     public String getAddress(){
         return mVenueAddress;
+    }
+
+    public String getImage(){
+        return mVenueImage;
+    }
+
+    public void setImage(String url){
+        this.mVenueImage = url;
     }
 }

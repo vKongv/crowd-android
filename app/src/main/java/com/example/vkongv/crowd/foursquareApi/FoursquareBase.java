@@ -28,32 +28,13 @@ public class FoursquareBase {
     private final String CLIENT_SECRET = "NF0XQUWB3KK21WUIOYZVPRZUQUMDNKNYMH30JFD3CZC543SN";
     private final String BASE_URL = "https://api.foursquare.com/v2/";
     private final String API_VER = "20161025";
-    private final int RESULT_LIMIT = 1;
+    public final int RESULT_LIMIT = 1;
     private String mMainUrl;
 
     public static final String sVenueSearchCall = "venues/search";
     public static final String sVenueDetailCall = "venues/";
+    public static final String sVenueImageCall = "venues/{VENUE_ID}/photos";
     private final String[] sSupportCalls = {sVenueSearchCall, sVenueDetailCall};
-
-    private void buildMainUrl(String call) {
-        //Build url accordingly
-        HttpUrl.Builder urlBuilder;
-        switch (call) {
-            case sVenueDetailCall:
-                urlBuilder = HttpUrl.parse(BASE_URL + sVenueDetailCall).newBuilder();
-                urlBuilder.addQueryParameter("client_id", CLIENT_ID);
-                urlBuilder.addQueryParameter("client_secret", CLIENT_SECRET);
-                urlBuilder.addQueryParameter("v", API_VER);
-                break;
-            case sVenueSearchCall:
-                urlBuilder = HttpUrl.parse(BASE_URL + sVenueSearchCall).newBuilder();
-                break;
-            default:
-                return;
-        }
-        //Assign URL to main url
-        mMainUrl = urlBuilder.build().toString();
-    }
 
     private void buildMainUrl(String call, String param) {
         //Build url accordingly
@@ -74,6 +55,13 @@ public class FoursquareBase {
                 urlBuilder.addQueryParameter("near", "Kuala Lumpur");
                 urlBuilder.addQueryParameter("limit", Integer.toString(RESULT_LIMIT));
                 urlBuilder.addQueryParameter("query", param);
+                break;
+            case sVenueImageCall:
+                String imageCall = sVenueImageCall.replace("{VENUE_ID}", param);
+                urlBuilder = HttpUrl.parse(BASE_URL + imageCall).newBuilder();
+                urlBuilder.addQueryParameter("client_id", CLIENT_ID);
+                urlBuilder.addQueryParameter("client_secret", CLIENT_SECRET);
+                urlBuilder.addQueryParameter("v", API_VER);
                 break;
             default:
                 return;
@@ -101,7 +89,14 @@ public class FoursquareBase {
         return apiCall();
     }
 
+    public JSONObject callVenueImage(String id){
+        buildMainUrl(sVenueImageCall, id);
+        return apiCall();
+
+    }
+
     private JSONObject apiCall() {
+        //Build API call url
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
                 .url(mMainUrl)
@@ -113,6 +108,7 @@ public class FoursquareBase {
             //Check if the request is success or not
             JSONObject meta = json.getJSONObject("meta");
             if(meta.getInt("code") == 200){
+                Log.i(TAG,"response is" + json.getJSONObject("response"));
                 return json.getJSONObject("response");
             }else{
                 Log.e(TAG, "Request fail with code `" + meta.getInt("code") + "`, ErrorType `" + meta.getString("errorType") + "`, ErrorDetail `" + meta.getString("errorDetail") + "`");

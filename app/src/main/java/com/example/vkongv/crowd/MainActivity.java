@@ -9,10 +9,12 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.vkongv.crowd.foursquareApi.FoursquareBase;
+import com.example.vkongv.crowd.helper.ImageLoad;
 import com.example.vkongv.crowd.model.Venue;
 
 import org.json.JSONException;
@@ -30,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
     private final String TAG = getClass().getName();
     private JSONObject response;
     private TextView tv1;
+    private ImageView iv1;
     private EditText et1;
     private Button btn1;
     private Venue mVenue;
@@ -41,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         tv1 = (TextView) findViewById(R.id.searchText);
         et1 = (EditText) findViewById(R.id.responseText);
+        iv1 = (ImageView) findViewById(R.id.venuePicture);
         if(isTest){
             btn1 = (Button) findViewById(R.id.testLayoutButton);
             btn1.setVisibility(View.VISIBLE);
@@ -63,14 +67,15 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     FoursquareBase fb = new FoursquareBase();
                     if((response = fb.callVenueSearch(params[0])) == null){
-                        throw new NullPointerException();
+                        throw new NullPointerException("`response` is null");
                     }else {
                         makeVenue();
+                        getVenueImage();
                         setResponseOnEt();
                         Log.d("Response", response.toString());
                     }
                 }catch (NullPointerException e){
-                    Log.e(TAG, "`response` is null");
+                    Log.e(TAG, e.getMessage());
                     generateErrorToast();
                 }
                 catch (Exception e) {
@@ -86,12 +91,45 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         try{
+            //TODO: Loop through search result and create venue
             mVenue = new Venue(response.getJSONArray("venues").getJSONObject(0));
         }catch (JSONException e){
             Log.e(TAG, "JSON Exception during getting list of venue");
             generateErrorToast();
         }
         catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    private void getVenueImage(){
+        try{
+            if(mVenue == null){
+                throw new NullPointerException("mVenue is null");
+            }else{
+                if(mVenue.getId().equals(Venue.NO_ID)){
+                    throw new NullPointerException("Venue does not have ID");
+                }else{
+                    FoursquareBase fb = new FoursquareBase();
+                    if((response = fb.callVenueImage(mVenue.getId())) == null){
+                        throw new NullPointerException("`response` is null");
+                    }else{
+                        if(response.has("photos")){
+                            response = response.getJSONObject("photos");
+                            if(response.has("items")){
+                                mVenue.setImage(response.getJSONArray("items").getJSONObject(0).getString("prefix") + "200x200" + response.getJSONArray("items").getJSONObject(0).getString("suffix"));
+                                new ImageLoad(mVenue.getImage(), iv1).execute();
+                            }
+                        }else{
+                            throw new NullPointerException("No images found");
+                        }
+                    }
+                }
+            }
+        }catch (NullPointerException e){
+            e.printStackTrace();
+            generateErrorToast(e.getMessage());
+        }catch (Exception e){
             e.printStackTrace();
         }
     }
